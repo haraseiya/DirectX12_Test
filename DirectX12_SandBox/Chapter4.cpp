@@ -156,7 +156,7 @@ int WINAPI WinMain(HINSTANCE, HINNSTANCE, LPSTR, int)
 		}
 	}
 
-	result = _dev->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,IID_PPV_ARGS(&_cmdAllocator));
+	result = _dev->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&_cmdAllocator));
 	result = _dev->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, _cmdAllocator, nullptr, IID_PPV_ARGS(&_cmdList));
 
 	// コマンドキュー作成
@@ -182,7 +182,7 @@ int WINAPI WinMain(HINSTANCE, HINNSTANCE, LPSTR, int)
 	swapchainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;	// ウィンドウ⇔フルスクリーン切り替え可能
 
 	result = _dxgiFactory->CreateSwapChainForHwnd(_cmdQueue, hwnd, &swapchainDesc, nullptr, nullptr, (IDXGISwapChain1**)&_swapchain);
-	
+
 	D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
 	heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;		// どんなビューを作るか（レンダーターゲットビューを指定）
 	heapDesc.NodeMask = 0;								// 複数のGPUがある場合に識別を行うためのビットフラグ（１つだけの想定なので０）
@@ -262,7 +262,7 @@ int WINAPI WinMain(HINSTANCE, HINNSTANCE, LPSTR, int)
 	// 作ったバッファにインデックスバッファを作成
 	unsigned short* mappedIdx = nullptr;
 	idxBuff->Map(0, nullptr, (void**)&mappedIdx);
-	std::copy(std::begin(indices),std::end(indices),mappedIdx);
+	std::copy(std::begin(indices), std::end(indices), mappedIdx);
 	idxBuff->Unmap(0, nullptr);
 
 	// インデックスバッファービューを作成
@@ -298,25 +298,23 @@ int WINAPI WinMain(HINSTANCE, HINNSTANCE, LPSTR, int)
 	}
 
 	// ピクセルシェーダーのコンパイル
-	result = D3DCompileFromFile(L"BasicPixelShader.hlsl", nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "BasicPS", "ps_5_0", D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, 0, &_psBlob, &errorBlob);
-	if (FAILED(result))
-	{
-		if (result == HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND))
-		{
+	result = D3DCompileFromFile(L"BasicPixelShader.hlsl",
+		nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE,
+		"BasicPS", "ps_5_0",
+		D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,
+		0, &_psBlob, &errorBlob);
+	if (FAILED(result)) {
+		if (result == HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND)) {
 			::OutputDebugStringA("ファイルが見当たりません");
-			return 0;
 		}
-		else
-		{
-			std::string errstr;							// 受け取り用string
-			errstr.resize(errorBlob->GetBufferSize());	// 必要なサイズを確保
-
-			// データをコピー
+		else {
+			std::string errstr;
+			errstr.resize(errorBlob->GetBufferSize());
 			std::copy_n((char*)errorBlob->GetBufferPointer(), errorBlob->GetBufferSize(), errstr.begin());
 			errstr += "\n";
-			::OutputDebugStringA(errstr.c_str());
+			OutputDebugStringA(errstr.c_str());
 		}
-		exit(1);
+		exit(1);//行儀悪いかな…
 	}
 
 	// 頂点レイアウトを設定
@@ -328,7 +326,7 @@ int WINAPI WinMain(HINSTANCE, HINNSTANCE, LPSTR, int)
 	// グラフィックスパイプラインステートの設定（頂点シェーダーとピクセルシェーダー）
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipeline = {};
 	gpipeline.pRootSignature = nullptr;
-	gpipeline.VS.pShaderBytecode = _vsBlob->GetBufferPointer();	
+	gpipeline.VS.pShaderBytecode = _vsBlob->GetBufferPointer();
 	gpipeline.VS.BytecodeLength = _vsBlob->GetBufferSize();
 	gpipeline.PS.pShaderBytecode = _psBlob->GetBufferPointer();
 	gpipeline.PS.BytecodeLength = _psBlob->GetBufferSize();
@@ -354,7 +352,7 @@ int WINAPI WinMain(HINSTANCE, HINNSTANCE, LPSTR, int)
 	gpipeline.InputLayout.NumElements = _countof(inputLayout);					// レイアウト配列の要素数(_countofは配列の要素数を取得するマクロ）
 	gpipeline.IBStripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED;	// 頂点同士を特に切り離さない
 	gpipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;	// 三角形で構成
-	
+
 	// レンダーターゲットの設定
 	gpipeline.NumRenderTargets = 1;	// 今は１つのみ
 	gpipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;	// ０～１に正規化されたRGBA
@@ -368,7 +366,7 @@ int WINAPI WinMain(HINSTANCE, HINNSTANCE, LPSTR, int)
 	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc = {};
 	rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;	// 頂点情報（入力アセンブラ）がある
 	ID3DBlob* rootSigBlob = nullptr;
-	result = D3D12SerializeRootSignature(&rootSignatureDesc,D3D_ROOT_SIGNATURE_VERSION_1_0,&rootSigBlob,&errorBlob);
+	result = D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, &errorBlob);
 
 	// ルートシグネチャオブジェクトの作成（シェーダー作成の時の同様）
 	result = _dev->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&rootsignature));
