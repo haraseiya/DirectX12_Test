@@ -28,6 +28,9 @@
     <Filter Include="ソース ファイル\Chapter06">
       <UniqueIdentifier>{e17decce-54c7-4105-b7de-0e2c76b07b57}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Chapter07">
+      <UniqueIdentifier>{50df1c68-2efe-43f7-be0a-af9a898b37c0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="test.cpp">
@@ -41,6 +44,9 @@
     </ClCompile>
     <ClCompile Include="Chapter06.cpp">
       <Filter>ソース ファイル\Chapter06</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter07.cpp">
+      <Filter>ソース ファイル\Chapter07</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -62,6 +68,12 @@
     <FxCompile Include="PixelShader06.hlsl">
       <Filter>ソース ファイル\Chapter06</Filter>
     </FxCompile>
+    <FxCompile Include="VertexShader07.hlsl">
+      <Filter>ソース ファイル\Chapter07</Filter>
+    </FxCompile>
+    <FxCompile Include="PixelShader07.hlsl">
+      <Filter>ソース ファイル\Chapter07</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="ShaderHeader05.hlsli">
@@ -69,6 +81,9 @@
     </None>
     <None Include="ShaderHeader06.hlsli">
       <Filter>ソース ファイル\Chapter06</Filter>
+    </None>
+    <None Include="ShaderHeader07.hlsli">
+      <Filter>ソース ファイル\Chapter07</Filter>
     </None>
   </ItemGroup>
 </Project>
